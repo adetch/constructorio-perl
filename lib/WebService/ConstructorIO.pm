@@ -14,29 +14,25 @@ WebService::ConstructorIO - A Perl client for the Constructor.io API. Constructo
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 has api_token        => ( is => 'ro', required => 1 );
 has autocomplete_key => ( is => 'ro', required => 1 );
-has host             => ( is => 'ro', default => "dev.ac.cnstrc.com" );
 
-has '+base_url'    => ( is => 'ro', default =>
-  method {
-    #'http://localhost:10000'
-    'https://dev.ac.cnstrc.com'
-    #'http://192.168.59.103:8006/'
-  }
-);
+has '+base_url'    => ( is => 'ro', default => 'https://ac.cnstrc.com' );
 
 =head1 SYNOPSIS
 
     use WebService::ConstructorIO;
 
-    my $constructorio = WebService::ConstructorIO->new();
+    my $constructorio = WebService::ConstructorIO->new(
+        api_token => [your API token], # from https://constructor.io/dashboard
+        autocomplete_key => [your autocomplete key]
+    );
     $constructor_io->add(item_name => "item", autocomplete_section => "standard");
     $constructor_io->modify(item_name => "item", new_item_name => "new item",
       autocomplete_section => "standard");
@@ -51,7 +47,19 @@ method BUILD(...) {
 
 =head1 METHODS
 
+=head2 verify()
+
+Verify that authentication works correctly.
+
+=cut
+
+method verify() {
+  my $response = $self->get("/v1/verify?autocomplete_key=" . $self->autocomplete_key);
+}
+
 =head2 add( item_name => $item_name, autocomplete_section => $autocomplete_section [, suggested_score => $suggested_score, keywords => $keywords, url => $url] )
+
+Add an item to your autocomplete index.
 
 =cut
 
@@ -67,6 +75,7 @@ method add(Str :$item_name!, Str :$autocomplete_section!, Int :$suggested_score,
 
 =head2 remove( item_name => $item_name, autocomplete_section => $autocomplete_section )
 
+Remove an item from your autocomplete index.
 =cut
 
 method remove(Str :$item_name!, Str :$autocomplete_section!) {
@@ -87,6 +96,8 @@ method remove(Str :$item_name!, Str :$autocomplete_section!) {
 
 =head2 modiy( item_name => $item_name, new_item_name => $new_item_name, autocomplete_section => $autocomplete_section [, suggested_score => $suggested_score, keywords => $keywords, url => $url] )
 
+Modify an item in your autocomplete index.
+
 =cut
 
 method modify(Str :$item_name!, Str :$new_item_name!, Str :$autocomplete_section!, Int :$suggested_score, ArrayRef :$keywords, Str :$url) {
@@ -99,6 +110,8 @@ method modify(Str :$item_name!, Str :$new_item_name!, Str :$autocomplete_section
 
 =head2 track_search( term => $term [, num_results => $num_results ] )
 
+Track a customer search.
+
 =cut
 
 method track_search(Str :$term!, Str :$num_results) {
@@ -109,6 +122,8 @@ method track_search(Str :$term!, Str :$num_results) {
 }
 
 =head2 track_click_through( term => $term, autocomplete_section => $autocomplete_section [, item => $item ] )
+
+Track a customer click-through.
 
 =cut
 
@@ -121,6 +136,8 @@ method track_click_through(Str :$term!, Str :$autocomplete_section!, Str :$item)
 }
 
 =head2 track_conversion( term => $term, autocomplete_section => $autocomplete_section [, item => $item, revenue => $revenue ] )
+
+Track a customer conversion.
 
 =cut
 
