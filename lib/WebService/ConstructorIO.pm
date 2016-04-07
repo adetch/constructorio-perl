@@ -63,14 +63,18 @@ Add an item to your autocomplete index.
 
 =cut
 
-method add(Str :$item_name!, Str :$autocomplete_section!, Int :$suggested_score, ArrayRef :$keywords, Str :$url) {
-  my $response = $self->post("/v1/item?autocomplete_key=" . $self->autocomplete_key, {
-    item_name => $item_name,
-    autocomplete_section => $autocomplete_section,
-    ($suggested_score ? (suggested_score => $suggested_score) : ()),
-    ($keywords ? (keywords => $keywords) : ()),
-    ($url ? (url => $url) : ()),
-  });
+method add(%args) {
+  my $response = $self->post("/v1/item?autocomplete_key=" . $self->autocomplete_key, \%args);
+}
+
+=head2 add_or_update( item_name => $item_name, autocomplete_section => $autocomplete_section [, suggested_score => $suggested_score, keywords => $keywords, url => $url] )
+
+Add an item to your autocomplete index.
+
+=cut
+
+method add_or_update(%args) {
+  my $response = $self->put("/v1/item?force=1&autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
 =head2 remove( item_name => $item_name, autocomplete_section => $autocomplete_section )
@@ -78,34 +82,27 @@ method add(Str :$item_name!, Str :$autocomplete_section!, Int :$suggested_score,
 Remove an item from your autocomplete index.
 =cut
 
-method remove(Str :$item_name!, Str :$autocomplete_section!) {
-  my $data = {
-    item_name => $item_name,
-    autocomplete_section => $autocomplete_section,
-  };
+method remove(%these_args) {
   my $path = "/v1/item?autocomplete_key=" . $self->autocomplete_key;
 
+  my %args = ();
   my $headers = $self->_headers(\%args);
   my $url = $self->_url($path);
-  my %content = $self->_content($data, %args);
+  my %content = $self->_content(\%these_args, %args);
   my $req = HTTP::Request->new(
       'DELETE', $url, [%$headers], $content{content}
   );
   $self->req($req, %args);
 }
 
-=head2 modiy( item_name => $item_name, new_item_name => $new_item_name, autocomplete_section => $autocomplete_section [, suggested_score => $suggested_score, keywords => $keywords, url => $url] )
+=head2 modify( item_name => $item_name, new_item_name => $new_item_name, autocomplete_section => $autocomplete_section [, suggested_score => $suggested_score, keywords => $keywords, url => $url] )
 
 Modify an item in your autocomplete index.
 
 =cut
 
-method modify(Str :$item_name!, Str :$new_item_name!, Str :$autocomplete_section!, Int :$suggested_score, ArrayRef :$keywords, Str :$url) {
-  my $response = $self->put("/v1/item?autocomplete_key=" . $self->autocomplete_key, {
-    item_name => $item_name,
-    new_item_name => $new_item_name,
-    autocomplete_section => $autocomplete_section
-  });
+method modify(%args) {
+  my $response = $self->put("/v1/item?autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
 =head2 track_search( term => $term [, num_results => $num_results ] )
@@ -114,11 +111,8 @@ Track a customer search.
 
 =cut
 
-method track_search(Str :$term!, Str :$num_results) {
-  my $response = $self->post("/v1/search?autocomplete_key=" . $self->autocomplete_key, {
-    term => $term,
-    ($num_results ? (num_results => $num_results) : ()),
-  });
+method track_search(%args) {
+  my $response = $self->post("/v1/search?autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
 =head2 track_click_through( term => $term, autocomplete_section => $autocomplete_section [, item => $item ] )
@@ -127,12 +121,8 @@ Track a customer click-through.
 
 =cut
 
-method track_click_through(Str :$term!, Str :$autocomplete_section!, Str :$item) {
-  my $response = $self->post("/v1/search?autocomplete_key=" . $self->autocomplete_key, {
-    term => $term,
-    autocomplete_section => $autocomplete_section,
-    ($item ? (item => $item) : ()),
-  });
+method track_click_through(%args) {
+  my $response = $self->post("/v1/click_through?autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
 =head2 track_conversion( term => $term, autocomplete_section => $autocomplete_section [, item => $item, revenue => $revenue ] )
@@ -141,13 +131,8 @@ Track a customer conversion.
 
 =cut
 
-method track_conversion(Str :$term!, Str :$autocomplete_section!, Str :$item, Int :$revenue) {
-  my $response = $self->post("/v1/search?autocomplete_key=" . $self->autocomplete_key, {
-    term => $term,
-    autocomplete_section => $autocomplete_section,
-    ($item ? (item => $item) : ()),
-    ($revenue ? (revenue => $revenue) : ()),
-  });
+method track_conversion(%args) {
+  my $response = $self->post("/v1/conversion?autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
 =head1 AUTHOR

@@ -4,9 +4,15 @@ use Test::More;
 use Test::Exception;
 use t::lib::Harness qw(constructor_io);
 
-plan tests => 4;
+plan tests => 7;
 
+#ok constructor_io->remove(item_name => "item", autocomplete_section => "standard"), "Successfully removed item";
 ok constructor_io->add(item_name => "item", autocomplete_section => "standard"), "Successfully added item";
+
+ok constructor_io->add_or_update(item_name => "item", suggested_score => 2000, autocomplete_section => "standard"), "Successfully updated item with add_or_update";
+ok constructor_io->add_or_update(item_name => "item2", autocomplete_section => "standard"), "Successfully added item with add_or_update";
+ok constructor_io->remove(item_name => "item2", autocomplete_section => "standard"), "Successfully removed item2";
+
 ok constructor_io->modify(item_name => "item", new_item_name => "new item",
   autocomplete_section => "standard"), "Successfully modified item";
 ok constructor_io->remove(item_name => "new item", autocomplete_section => "standard"), "Successfully removed item";
