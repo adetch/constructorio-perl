@@ -67,14 +67,34 @@ method add(%args) {
   my $response = $self->post("/v1/item?autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
+=head2 add_batch( items => [ { item_name => $item_name [, suggested_score => $suggested_score ] } ], autocomplete_section => $autocomplete_section )
+
+Add multiple items to your autocomplete index.
+
+=cut
+
+method add_batch(%args) {
+  my $response = $self->post("/v1/batch_items?autocomplete_key=" . $self->autocomplete_key, \%args);
+}
+
 =head2 add_or_update( item_name => $item_name, autocomplete_section => $autocomplete_section [, suggested_score => $suggested_score, keywords => $keywords, url => $url] )
 
-Add an item to your autocomplete index.
+Add an item to your autocomplete index, or update it if an existing item with the same name already exists.
 
 =cut
 
 method add_or_update(%args) {
   my $response = $self->put("/v1/item?force=1&autocomplete_key=" . $self->autocomplete_key, \%args);
+}
+
+=head2 add_or_update_batch( items => [ { item_name => $item_name [, suggested_score => $suggested_score ] } ], autocomplete_section => $autocomplete_section )
+
+Add multiple items to your autocomplete index, or update them if existing items with the same names already exist.
+
+=cut
+
+method add_or_update_batch(%args) {
+  my $response = $self->put("/v1/batch_items?force=1&autocomplete_key=" . $self->autocomplete_key, \%args);
 }
 
 =head2 remove( item_name => $item_name, autocomplete_section => $autocomplete_section )
