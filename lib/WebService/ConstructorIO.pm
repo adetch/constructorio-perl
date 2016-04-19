@@ -14,11 +14,11 @@ WebService::ConstructorIO - A Perl client for the Constructor.io API. Constructo
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 has api_token        => ( is => 'ro', required => 1 );
 has autocomplete_key => ( is => 'ro', required => 1 );
