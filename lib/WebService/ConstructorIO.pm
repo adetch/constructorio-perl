@@ -18,7 +18,7 @@ Version 0.03
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 has api_token        => ( is => 'ro', required => 1 );
 has autocomplete_key => ( is => 'ro', required => 1 );

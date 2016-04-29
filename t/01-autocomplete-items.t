@@ -2,7 +2,9 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use t::lib::Harness qw(constructor_io);
+use t::lib::Harness qw(constructor_io skip_unless_has_keys);
+
+skip_unless_has_keys;
 
 plan tests => 11;
 
